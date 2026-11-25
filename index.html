@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#18372d"><title>Movement Journal</title>
+<style>
+[hidden]{display:none!important}*{box-sizing:border-box}body{margin:0;background:#f3f5ef;color:#182c26;font:16px/1.5 system-ui,sans-serif}button,input,textarea{font:inherit}header{background:#18372d;color:#fff;padding:38px 20px 36px;border-bottom:5px solid #d9e991}.wrap{max-width:960px;margin:auto}h1,h2,p{margin:0}h1{font:400 clamp(2.6rem,8vw,4.8rem)/1 Georgia,serif;letter-spacing:-.055em}header p{color:#d4e2d9;margin-top:12px}main{padding:22px 16px 44px}.card{background:#fff;border:1px solid #dbe3d8;border-radius:20px;padding:20px;margin-bottom:15px}h2{font:400 1.65rem Georgia,serif;margin-bottom:10px}.top,.actions,.days{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.top{justify-content:space-between}.actions{margin-top:14px}button,.linkbutton{display:inline-flex;align-items:center;justify-content:center;min-height:44px;border-radius:10px;padding:7px 12px;background:#edf2e9;color:#19382e;border:1px solid #d2dfd0;cursor:pointer;text-decoration:none}button[aria-current=date],button.primary{background:#19382e;color:#fff;border-color:#19382e}.days{display:grid;grid-template-columns:repeat(7,1fr);margin:10px 0 16px;gap:4px}.days button{flex-direction:column;padding:5px 0;min-width:0;font-size:.85rem}.days strong{font-size:1rem}.days small{font-size:.75rem}.totals{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.metric{background:#edf3e8;border-radius:12px;padding:9px 11px;font-size:.86rem}.metric b{display:block;font-size:1.35rem}.muted,small{color:#4e6158}.days button[aria-current=date] small{color:#d4e2d9}.layout{display:grid;grid-template-columns:1.4fr 1fr;gap:15px;align-items:start}.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}label{display:block;font-weight:600;font-size:.9rem}input:not([type=checkbox]),textarea{width:100%;border:1px solid #b8c9bf;border-radius:8px;padding:8px 10px;background:#fbfcfa;color:inherit;min-height:44px}textarea{resize:vertical}.checks{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 16px}.checks label{display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:10px;background:#eef3e9;min-height:44px}.checks input{width:18px;height:18px;accent-color:#19382e}fieldset{border:0;margin:0;padding:0;min-width:0}legend{font-weight:650}summary{cursor:pointer;font-weight:650}.spaced{margin-top:12px}.status{margin-top:10px;min-height:1.5em}.history{margin:0;padding:0;list-style:none}.history li{padding:8px 0;border-bottom:1px solid #e1e9e0;display:flex;gap:8px;align-items:center;justify-content:space-between}.history li span{overflow-wrap:anywhere}.history li:last-child{border:0}a{color:#204d3d}:focus-visible{outline:3px solid #957228;outline-offset:2px}@media(max-width:680px){.layout{display:block}header{padding-top:28px}.card{padding:15px}}
+</style></head>
+<body><header><div class="wrap"><h1>Movement Journal</h1><p>Hareket, toparlanma ve beden farkındalığı günlüğü</p></div></header>
+<main class="wrap">
+<section class="card" aria-labelledby="week-title"><div class="top"><h2 id="week-title">Bu hafta</h2><div class="actions" style="margin:0"><button id="prev" aria-label="Önceki hafta">‹</button><button id="today">Bugün</button><button id="next" aria-label="Sonraki hafta">›</button></div></div><p id="range" class="muted"></p><div id="days" class="days"></div><div class="totals" id="totals"></div><p class="muted spaced">Haftalık hedefler esnek. Günleri programına göre seç.</p></section>
+<div class="layout"><section class="card" aria-labelledby="entry-title"><h2 id="entry-title">Günlük kayıt</h2><label for="date">Kayıt tarihi</label><input type="date" id="date" min="1900-01-01" max="9999-12-31" required>
+<form id="entry" class="spaced"><fieldset><legend>Bugün ne yaptın?</legend><div class="checks"><label><input type="checkbox" name="gym"> Salon</label><label><input type="checkbox" name="swim"> Yüzme</label><label><input type="checkbox" name="yoga"> Yoga</label><label><input type="checkbox" name="walk"> Yürüyüş</label><label><input type="checkbox" name="mobility"> Mobilite</label></div></fieldset>
+<div class="fields">
+<label>Uyku (saat)<input type="number" inputmode="decimal" name="sleep" min="0" max="24" step="any" placeholder="ör. 7,5"></label>
+<label>Enerji (1–5)<input type="number" inputmode="numeric" name="energy" min="1" max="5" placeholder="5 = yüksek"></label>
+<label>Ağrı (0–10)<input type="number" inputmode="numeric" name="pain" min="0" max="10" placeholder="0 = ağrı yok"></label>
+<label>Stres (1–5)<input type="number" inputmode="numeric" name="stress" min="1" max="5" placeholder="5 = yüksek"></label>
+</div>
+<details class="spaced" id="metrics"><summary>Apple Watch ve Hevy alanları</summary><div class="fields spaced">
+<label>Adım<input type="number" name="steps" inputmode="numeric" min="0"></label>
+<label>Dinlenik nabız (atım/dk)<input type="number" name="pulse" inputmode="numeric" min="1"></label>
+<label>HRV (ms)<input type="number" name="hrv" inputmode="decimal" min="0" step="any"></label>
+<label>Antrenman süresi (dk)<input type="number" name="minutes" inputmode="numeric" min="0"></label>
+<label>Antrenman zorluğu (1–10)<input type="number" name="effort" inputmode="numeric" min="1" max="10"></label>
+</div><label class="spaced">Hevy antrenman bağlantısı<input type="url" name="hevy" placeholder="https://…" maxlength="1000"></label></details>
+<label class="spaced">Hareket ve toparlanma notu<textarea name="notes" rows="3" maxlength="3000" placeholder="Nasıl hissettin? Hangi hareket iyi geldi?"></textarea></label>
+<div class="actions"><button class="primary" type="submit">Kaydet</button><button type="button" id="remove" hidden>Kaydı sil</button></div>
+</form><p id="status" class="status muted" role="status"></p></section>
+<aside><section class="card"><h2>Son kayıtlar</h2><ul id="history" class="history"></ul></section>
+<section class="card"><h2>Hevy & Apple Sağlık</h2><p class="muted">Set, tekrar ve ağırlıkları Hevy’de tut. Apple Watch verilerini Apple Sağlık’tan alıp buraya elle girebilirsin. Aynı antrenmanı haftalık sayaca bir kez işaretle.</p><div class="actions"><a class="linkbutton" href="https://hevy.com/" target="_blank" rel="noopener noreferrer">Hevy</a><a class="linkbutton" id="workout" target="_blank" rel="noopener noreferrer" hidden>Antrenmanı aç</a></div></section>
+<section class="card"><h2>Verilerini taşı</h2><p class="muted">Kayıtlar bu tarayıcıda saklanır. Cihaz veya tarayıcı değiştirirken yedeğini indirip yeni cihazda içe aktarabilirsin.</p><div class="actions"><button id="export">Yedeği indir</button><button id="import">Yedeği yükle</button><input id="file" type="file" accept=".json,application/json" hidden></div><p class="muted spaced" id="backup-status" role="status"></p></section></aside></div>
+</main>
+<script>
+'use strict';
+const key = 'movement-journal-v1';
+const activities = {gym:'Salon', swim:'Yüzme', yoga:'Yoga', walk:'Yürüyüş', mobility:'Mobilite'};
+const goals = {gym:2, swim:1, yoga:7};
+const ranges = {sleep:[0,24], energy:[1,5], pain:[0,10], stress:[1,5], steps:[0,Infinity], pulse:[1,Infinity], hrv:[0,Infinity], minutes:[0,Infinity], effort:[1,10]};
+const byId = id => document.getElementById(id);
+const form = byId('entry');
+const format = new Intl.DateTimeFormat('tr-TR', {day:'numeric', month:'long', year:'numeric'});
+const shortDay = new Intl.DateTimeFormat('tr-TR', {weekday:'short'});
+const dateKey = date => [date.getFullYear(), String(date.getMonth()+1).padStart(2,'0'), String(date.getDate()).padStart(2,'0')].join('-');
+const parseDay = value => new Date(value + 'T12:00:00');
+const validDay = value => /^\d{4}-\d{2}-\d{2}$/.test(value) && value >= '1900-01-01' && !Number.isNaN(+parseDay(value)) && dateKey(parseDay(value)) === value;
+function shift(date, days) {
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+}
+function monday(date) { return shift(date, -((date.getDay()+6)%7)); }
+function validLink(value) {
+  try { return new URL(value).protocol === 'https:'; }
+  catch { return false; }
+}
+function verifiedEntries(data) {
+  if (!data || data.version !== 1 || !data.entries || typeof data.entries !== 'object' || Array.isArray(data.entries)) throw Error();
+  const entries = {};
+  for (const [day, entry] of Object.entries(data.entries)) {
+    if (!validDay(day) || !entry || typeof entry !== 'object' || Array.isArray(entry)) throw Error();
+    const clean = {};
+    for (const name of Object.keys(activities)) {
+      if (entry[name] !== undefined && typeof entry[name] !== 'boolean') throw Error();
+      clean[name] = entry[name] === true;
+    }
+    for (const [name,[min,max]] of Object.entries(ranges)) {
+      const value = entry[name];
+      if (value !== undefined && (typeof value !== 'number' || !Number.isFinite(value) || value < min || value > max || (!['sleep','hrv'].includes(name) && !Number.isInteger(value)))) throw Error();
+      if (value !== undefined) clean[name] = value;
+    }
+    if (typeof entry.notes !== 'string' || entry.notes.length > 3000 || typeof entry.hevy !== 'string' || entry.hevy.length > 1000 || (entry.hevy && !validLink(entry.hevy))) throw Error();
+    entries[day] = {...clean, notes:entry.notes, hevy:entry.hevy};
+  }
+  return entries;
+}
+let entries = {};
+let selected = dateKey(new Date());
+let dirty = false;
+let readFailed = false;
+try {
+  const stored = localStorage.getItem(key);
+  if (stored) entries = verifiedEntries(JSON.parse(stored));
+} catch {
+  readFailed = true;
+}
+function save(next) {
+  try { localStorage.setItem(key, JSON.stringify({version:1, entries:next})); }
+  catch { return false; }
+  entries = next;
+  return true;
+}
+function makeButton(label, handler) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.textContent = label;
+  button.addEventListener('click', handler);
+  return button;
+}
+function renderWeek() {
+  const start = monday(parseDay(selected));
+  byId('range').textContent = format.format(start) + ' – ' + format.format(shift(start,6));
+  const days = Array.from({length:7}, (_,i) => shift(start,i));
+  byId('days').replaceChildren(...days.map(day => {
+    const id = dateKey(day);
+    const button = makeButton(shortDay.format(day), () => selectDay(id));
+    button.setAttribute('aria-label',format.format(day) + (entries[id] ? ', kayıt var' : ''));
+    if (id === selected) button.setAttribute('aria-current','date');
+    const number = document.createElement('strong');
+    number.textContent = day.getDate();
+    button.append(number);
+    if (entries[id]) {
+      const dot = document.createElement('small');
+      dot.textContent = '●';
+      dot.setAttribute('aria-hidden','true');
+      button.append(dot);
+    }
+    return button;
+  }));
+  byId('totals').replaceChildren(...Object.entries(goals).map(([name,goal]) => {
+    const count = days.filter(day => entries[dateKey(day)]?.[name]).length;
+    const tile = document.createElement('div');
+    tile.className = 'metric';
+    tile.append(activities[name]);
+    const number = document.createElement('b');
+    number.textContent = count + ' / ' + goal;
+    tile.append(number);
+    return tile;
+  }));
+}
+function render() {
+  renderWeek();
+  const entry = entries[selected] || {};
+  byId('date').value = selected;
+  for (const name of Object.keys(activities)) form.elements[name].checked = entry[name] === true;
+  for (const name of [...Object.keys(ranges),'notes','hevy']) form.elements[name].value = entry[name] ?? '';
+  form.elements.hevy.setCustomValidity('');
+  byId('remove').hidden = !entries[selected];
+  const workout = byId('workout');
+  workout.hidden = !entry.hevy;
+  if (entry.hevy) workout.href = entry.hevy;
+  else workout.removeAttribute('href');
+  const dates = Object.keys(entries).sort().reverse().slice(0,8);
+  byId('history').replaceChildren(...(dates.length ? dates : ['']).map(day => {
+    const row = document.createElement('li');
+    const label = document.createElement('span');
+    label.textContent = day ? Object.keys(activities).filter(name => entries[day][name]).map(name => activities[name]).join(', ') || 'Toparlanma kaydı' : 'Henüz kayıt yok.';
+    if (day) row.append(makeButton(format.format(parseDay(day)), () => selectDay(day)));
+    row.append(label);
+    return row;
+  }));
+}
+function selectDay(day) {
+  if (!validDay(day) || (day !== selected && dirty && !confirm('Kaydedilmemiş değişiklikler var. Tarih değiştirilsin mi?'))) {
+    byId('date').value = selected;
+    return;
+  }
+  if (day === selected) return;
+  selected = day;
+  dirty = false;
+  byId('status').textContent = '';
+  render();
+}
+form.addEventListener('input', () => { dirty = true; form.elements.hevy.setCustomValidity(''); });
+form.addEventListener('submit', event => {
+  event.preventDefault();
+  const data = Object.fromEntries(Object.keys(activities).map(name => [name,form.elements[name].checked]));
+  for (const name of Object.keys(ranges)) {
+    if (form.elements[name].value !== '') data[name] = form.elements[name].valueAsNumber;
+  }
+  data.notes = form.elements.notes.value.trim();
+  data.hevy = form.elements.hevy.value.trim();
+  if (data.hevy && !validLink(data.hevy)) {
+    form.elements.hevy.setCustomValidity('HTTPS ile başlayan bağlantıyı gir.');
+    form.elements.hevy.reportValidity();
+    return;
+  }
+  if (readFailed || !save({...entries,[selected]:data})) {
+    byId('status').textContent = 'Kayıt saklanamadı. Tarayıcı depolamasını kontrol et veya geçerli bir yedek yükle.';
+    return;
+  }
+  dirty = false;
+  render();
+  byId('status').textContent = 'Kayıt kaydedildi.';
+});
+byId('remove').addEventListener('click', () => {
+  if (!confirm(format.format(parseDay(selected)) + ' tarihli kayıt silinsin mi?')) return;
+  const next = {...entries};
+  delete next[selected];
+  if (save(next)) {
+    dirty = false;
+    render();
+    byId('status').textContent = 'Kayıt silindi.';
+  } else byId('status').textContent = 'Kayıt silinemedi.';
+});
+byId('date').addEventListener('change', event => selectDay(event.target.value));
+byId('today').onclick = () => selectDay(dateKey(new Date()));
+byId('prev').onclick = () => selectDay(dateKey(shift(parseDay(selected),-7)));
+byId('next').onclick = () => selectDay(dateKey(shift(parseDay(selected),7)));
+byId('export').onclick = () => {
+  if (readFailed) {
+    byId('backup-status').textContent = 'Okunamadığı için mevcut kayıtlar dışa aktarılamadı.';
+    return;
+  }
+  const url = URL.createObjectURL(new Blob([JSON.stringify({version:1, entries},null,2)], {type:'application/json'}));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'movement-journal-' + dateKey(new Date()) + '.json';
+  document.body.append(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url),30000);
+};
+byId('import').onclick = () => byId('file').click();
+byId('file').addEventListener('change', async event => {
+  const file = event.target.files[0];
+  event.target.value = '';
+  if (!file) return;
+  try {
+    const imported = verifiedEntries(JSON.parse(await file.text()));
+    const duplicateCount = Object.keys(imported).filter(day => Object.hasOwn(entries,day)).length;
+    if (duplicateCount || dirty || readFailed) {
+      const message = [
+        duplicateCount ? duplicateCount + ' tarihteki kayıtlar yedekteki sürümle değişecek.' : '',
+        dirty ? 'Kaydedilmemiş değişiklikler silinecek.' : '',
+        readFailed ? 'Okunamayan tarayıcı verisi yedekle değiştirilecek.' : ''
+      ].filter(Boolean).join(' ');
+      if (!confirm(message + ' Devam edilsin mi?')) return;
+    }
+    if (!save({...entries,...imported})) {
+      byId('backup-status').textContent = 'Yedek tarayıcıya kaydedilemedi.';
+      return;
+    }
+    readFailed = false;
+    dirty = false;
+    render();
+    byId('status').textContent = '';
+    byId('backup-status').textContent = Object.keys(imported).length + ' günlük kayıt içe aktarıldı.';
+  } catch { byId('backup-status').textContent = 'Bu dosya geçerli bir Movement Journal yedeği değil.'; }
+});
+window.addEventListener('beforeunload', event => { if (dirty) event.preventDefault(); });
+render();
+if (readFailed) byId('status').textContent = 'Tarayıcıdaki kayıtlar okunamadı. Varsa bir yedek yükle.';
+</script></body></html>
